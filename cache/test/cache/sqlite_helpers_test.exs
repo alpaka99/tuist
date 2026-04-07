@@ -44,6 +44,20 @@ defmodule Cache.SQLiteHelpersTest do
     end
   end
 
+  describe "contention_error?/1" do
+    test "returns true for busy SQLite errors" do
+      assert SQLiteHelpers.contention_error?(%Exqlite.Error{message: "database is locked"})
+    end
+
+    test "returns true for connection checkout errors" do
+      assert SQLiteHelpers.contention_error?(%DBConnection.ConnectionError{message: "connection not available"})
+    end
+
+    test "returns false for unrelated errors" do
+      refute SQLiteHelpers.contention_error?(%RuntimeError{message: "boom"})
+    end
+  end
+
   describe "file_size/1" do
     test "returns size for existing file" do
       path = Path.join(System.tmp_dir!(), "sqlite_helpers_test_#{:erlang.unique_integer([:positive])}")

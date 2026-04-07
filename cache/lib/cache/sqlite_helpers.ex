@@ -11,6 +11,10 @@ defmodule Cache.SQLiteHelpers do
 
   def busy_error?(_), do: false
 
+  def contention_error?(error) do
+    busy_error?(error) or match?(%DBConnection.ConnectionError{}, error)
+  end
+
   def db_path(repo, fallback \\ "key_value.sqlite") do
     Application.get_env(:cache, repo)[:database] || fallback
   end
@@ -30,7 +34,7 @@ defmodule Cache.SQLiteHelpers do
     set_busy_timeout!(repo, Config.repo_busy_timeout_ms(repo))
   rescue
     error ->
-      if busy_error?(error) do
+      if contention_error?(error) do
         :ok
       else
         Logger.warning("Failed to restore busy timeout for #{inspect(repo)}: #{inspect(error)}")

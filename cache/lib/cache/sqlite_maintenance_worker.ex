@@ -17,7 +17,7 @@ defmodule Cache.SQLiteMaintenanceWorker do
     :ok
   rescue
     error ->
-      if SQLiteHelpers.busy_error?(error) do
+      if SQLiteHelpers.contention_error?(error) do
         :ok
       else
         reraise error, __STACKTRACE__
