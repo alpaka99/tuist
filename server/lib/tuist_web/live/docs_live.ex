@@ -8,7 +8,6 @@ defmodule TuistWeb.DocsLive do
   alias Tuist.Docs
   alias Tuist.Docs.Paths
   alias TuistWeb.Errors.NotFoundError
-  alias TuistWeb.LayoutLive
 
   @noora_icons_path Path.expand("../noora/lib/noora/icons", File.cwd!())
   @copy_check_icon @noora_icons_path |> Path.join("copy-check.svg") |> File.read!() |> String.trim()
@@ -27,7 +26,6 @@ defmodule TuistWeb.DocsLive do
     socket =
       socket
       |> assign(:locale, locale)
-      |> LayoutLive.assign_latest_app_release()
       |> attach_hook(:assign_current_path, :handle_params, fn _params, url, socket ->
         uri = URI.parse(url)
         current_path = if(is_nil(uri.query), do: uri.path, else: "#{uri.path}?#{uri.query}")

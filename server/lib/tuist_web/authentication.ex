@@ -190,6 +190,7 @@ defmodule TuistWeb.Authentication do
 
     return_to =
       case Keyword.get(opts, :return_to) do
+        "//" <> _ -> ~p"/"
         "/" <> _ = path -> path
         _ -> ~p"/"
       end

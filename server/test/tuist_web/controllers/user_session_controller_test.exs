@@ -171,5 +171,35 @@ defmodule TuistWeb.UserSessionControllerTest do
       assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :user_token)
     end
+
+    test "redirects to return_to when it is a local path", %{conn: conn, user: user} do
+      conn =
+        conn
+        |> log_in_user(user)
+        |> delete(~p"/users/log_out?#{%{return_to: "/en/docs/guides"}}")
+
+      assert redirected_to(conn) == "/en/docs/guides"
+      refute get_session(conn, :user_token)
+    end
+
+    test "ignores protocol-relative return_to paths", %{conn: conn, user: user} do
+      conn =
+        conn
+        |> log_in_user(user)
+        |> delete(~p"/users/log_out?#{%{return_to: "//evil.example/foo"}}")
+
+      assert redirected_to(conn) == ~p"/"
+      refute get_session(conn, :user_token)
+    end
+
+    test "ignores non-local return_to paths", %{conn: conn, user: user} do
+      conn =
+        conn
+        |> log_in_user(user)
+        |> delete(~p"/users/log_out?#{%{return_to: "https://evil.example/foo"}}")
+
+      assert redirected_to(conn) == ~p"/"
+      refute get_session(conn, :user_token)
+    end
   end
 end

@@ -11,7 +11,7 @@ defmodule TuistWeb.AccountDropdown do
   alias TuistWeb.Authentication
 
   attr :id, :string, required: true
-  attr :latest_app_release, :map, required: true
+  attr :latest_app_release, :map, default: nil
   attr :current_user, :map, required: true
   attr :avatar_size, :string, default: "medium"
   attr :log_out_return_to, :string, default: nil
@@ -83,10 +83,13 @@ defmodule TuistWeb.AccountDropdown do
                 <:icon_left><.dashboard /></:icon_left>
               </.button>
               <.button
-                :if={latest_app_release = @latest_app_release.ok? && @latest_app_release.result}
+                :if={
+                  not is_nil(@latest_app_release) and @latest_app_release.ok? and
+                    @latest_app_release.result
+                }
                 label={dgettext("dashboard", "Download macOS app")}
                 variant="secondary"
-                href={latest_app_release}
+                href={@latest_app_release.result}
               >
                 <:icon_left><.download /></:icon_left>
               </.button>
@@ -113,6 +116,7 @@ defmodule TuistWeb.AccountDropdown do
     """
   end
 
+  defp log_out_path("//" <> _), do: ~p"/users/log_out"
   defp log_out_path("/" <> _ = return_to), do: ~p"/users/log_out?#{%{return_to: return_to}}"
   defp log_out_path(_), do: ~p"/users/log_out"
 

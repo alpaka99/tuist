@@ -169,7 +169,6 @@
         <.account_dropdown
           :if={not is_nil(assigns[:current_user])}
           id="docs-account-dropdown"
-          latest_app_release={@latest_app_release}
           current_user={@current_user}
           log_out_return_to={@current_path}
           primary_action="dashboard"
@@ -179,15 +178,6 @@
         <.neutral_button size="large" aria-label={dgettext("docs", "Search")}>
           <.icon name="search" />
         </.neutral_button>
-        <.account_dropdown
-          :if={not is_nil(assigns[:current_user])}
-          id="docs-mobile-account-dropdown"
-          avatar_size="small"
-          latest_app_release={@latest_app_release}
-          current_user={@current_user}
-          log_out_return_to={@current_path}
-          primary_action="dashboard"
-        />
         <.neutral_button
           size="large"
           aria-label={dgettext("docs", "Toggle sidebar")}
