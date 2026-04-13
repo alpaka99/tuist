@@ -142,7 +142,7 @@ defmodule TuistWeb.UserSessionControllerTest do
 
     test "stores return_to path in session", %{conn: conn} do
       conn = get(conn, ~p"/docs/login?#{%{return_to: "/en/docs/guides"}}")
-      assert redirected_to(conn) == ~p"/users/log_in"
+      assert redirected_to(conn) == ~p"/users/log_in?#{%{return_to: "/en/docs/guides"}}"
       assert get_session(conn, :user_return_to) == "/en/docs/guides"
     end
 

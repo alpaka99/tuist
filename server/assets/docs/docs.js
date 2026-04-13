@@ -3,6 +3,7 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../app/js/vendor/topbar.js";
 import Noora from "noora";
+import ThemeSwitcher from "../app/js/ThemeSwitcher.js";
 import DocsContentHook from "./hooks/docs-content-hook.js";
 import DocsInstallTabsHook from "./hooks/docs-install-tabs-hook.js";
 import { initDocsSearch } from "./hooks/docs-search-hook.js";
@@ -17,6 +18,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken, _csp_nonce: cspNonce },
   hooks: {
     ...Noora.Hooks,
+    ThemeSwitcher,
     DocsContent: DocsContentHook,
     DocsInstallTabs: DocsInstallTabsHook,
   },

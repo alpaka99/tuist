@@ -8,11 +8,14 @@ defmodule TuistWeb.AccountDropdown do
   alias Tuist.Accounts
   alias Tuist.Accounts.User
   alias Tuist.Authorization
+  alias TuistWeb.Authentication
 
   attr :id, :string, required: true
   attr :latest_app_release, :map, required: true
   attr :current_user, :map, required: true
   attr :avatar_size, :string, default: "medium"
+  attr :log_out_return_to, :string, default: nil
+  attr :primary_action, :string, values: ~w(account_settings dashboard), default: "account_settings"
 
   def account_dropdown(assigns) do
     ~H"""
@@ -56,11 +59,20 @@ defmodule TuistWeb.AccountDropdown do
             <.line_divider />
             <div data-part="actions">
               <.button
+                :if={@primary_action == "account_settings"}
                 navigate={~p"/#{@current_user.account.name}/settings"}
                 label={dgettext("dashboard", "Account settings")}
                 variant="secondary"
               >
                 <:icon_left><.settings /></:icon_left>
+              </.button>
+              <.button
+                :if={@primary_action == "dashboard"}
+                navigate={Authentication.signed_in_path(@current_user)}
+                label={dgettext("dashboard", "Dashboard")}
+                variant="secondary"
+              >
+                <:icon_left><.layout_grid /></:icon_left>
               </.button>
               <.button
                 :if={Authorization.authorize(:ops_read, @current_user) == :ok}
@@ -89,7 +101,7 @@ defmodule TuistWeb.AccountDropdown do
                 <.theme_system name={@id} id={"#{@id}-theme-switcher-system"} />
               </div>
             </div>
-            <.link href={~p"/users/log_out"} method="delete">
+            <.link href={log_out_path(@log_out_return_to)} method="delete">
               <.button label={dgettext("dashboard", "Log out")} size="large" variant="destructive">
                 <:icon_left><.logout /></:icon_left>
               </.button>
@@ -100,6 +112,9 @@ defmodule TuistWeb.AccountDropdown do
     </div>
     """
   end
+
+  defp log_out_path("/" <> _ = return_to), do: ~p"/users/log_out?#{%{return_to: return_to}}"
+  defp log_out_path(_), do: ~p"/users/log_out"
 
   attr :id, :string, required: true
   attr :name, :string, required: true
